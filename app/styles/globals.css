@@ -1,0 +1,8 @@
+/* .Codemirror-cursors{
+    visibility: visible !important
+} */
+
+
+.editor.readonly .cm-cursor {
+    display: none !important;
+}
