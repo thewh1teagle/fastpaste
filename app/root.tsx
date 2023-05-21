@@ -19,7 +19,7 @@ export const links: LinksFunction = () => [
 
 export default function App() {
   return (
-    <html lang="en" style={{background: '#1e1e1e'}}>
+    <html lang="en" style={{background: '#1e1e1e'}} translate="no">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />

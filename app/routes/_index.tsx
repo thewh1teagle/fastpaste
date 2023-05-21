@@ -10,7 +10,7 @@ import { FiFileText } from 'react-icons/fi'
 import { detectLanguage } from "~/utils/detectLang";
 
 export const meta: V2_MetaFunction = () => {
-  return [{ title: "New Remix App" }];
+  return [{ title: "FastPaste" }];
 };
 
 export async function action({ request }: ActionArgs) {
