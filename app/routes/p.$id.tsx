@@ -52,7 +52,7 @@ export default function PasteRoute() {
                     </CopyToolTip>
                 </div>
             </Nav>
-            <Editor value={code.content} readOnly={true} lang={translatedLanguage ?? 'python'} />
+            <Editor autoFocus={false} value={code.content} readOnly={true} lang={translatedLanguage ?? 'python'} />
         </div>
     )
 }
