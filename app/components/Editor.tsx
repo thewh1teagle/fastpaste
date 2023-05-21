@@ -55,6 +55,7 @@ export default function Editor(props: ReactCodeMirrorProps) {
       height="calc(100vh - 3.5rem)"
       theme={vscodeDark}
       extensions={extensions}
+      autoFocus={true}
       {...props}
     />
   );
