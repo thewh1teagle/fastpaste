@@ -16,7 +16,10 @@ export const meta: V2_MetaFunction = () => {
 export async function action({ request }: ActionArgs) {
   const data = await request.formData()
   const content = data.get('content') as string
-  const languageId = await detectLanguage(content)
+  var languageId = ''
+  try {
+    languageId = await detectLanguage(content)
+  } catch {}
   const { id } = await db.code.create({
     data: { content, language: languageId },
     select: { id: true }
