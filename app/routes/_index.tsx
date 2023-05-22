@@ -68,7 +68,7 @@ export default function Index() {
           <span>Create</span>
         </button>
       </Nav>
-      <Editor onChange={(value, viewUpdate) => setCode(value)} />
+      <Editor autoFocus={true} onChange={(value, viewUpdate) => setCode(value)} />
     </div>
   );
 }
