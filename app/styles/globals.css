@@ -6,3 +6,12 @@
 .editor.readonly .cm-cursor {
     display: none !important;
 }
+
+.editor.lineClickable .cm-gutterElement {
+    cursor: pointer;
+}
+
+.editor.lineClickable .cm-gutterElement:hover {
+    font-weight: bold;
+    color: white;
+}

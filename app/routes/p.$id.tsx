@@ -1,5 +1,5 @@
 import { json, type LoaderFunction, type LoaderArgs, ActionArgs } from "@remix-run/node"
-import { useFetcher, useLoaderData } from "@remix-run/react"
+import { useFetcher, useLoaderData, useLocation } from "@remix-run/react"
 import Editor from "~/components/Editor"
 import Nav from "~/components/Nav"
 import CopyToolTip from "~/components/Tooltip"
@@ -61,6 +61,11 @@ export default function PasteRoute() {
     const [content, setContent] = useState<string>(code.content)
     const [edit, setEdit] = useState(false)
     const fetcher = useFetcher()
+
+    const { hash } = useLocation()
+    
+    const lineNumber = Number(hash.slice(2))
+
 
 
     function onCopyURL() {
@@ -124,7 +129,9 @@ export default function PasteRoute() {
 
                 </div>
             </Nav>
-            <Editor autoFocus={edit} value={content} onChange={(value) => setContent(value)} readOnly={edit === false} lang={translatedLanguage ?? 'python'} />
+            <Editor initialLine={lineNumber ?? undefined} onSelectLine={n => {
+                window.location.hash = `L${n}`
+            }} autoFocus={edit} value={content} onChange={(value) => setContent(value)} readOnly={edit === false} lang={translatedLanguage ?? 'python'} />
         </div>
     )
 }

@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import CodeMirror, { ReactCodeMirrorProps } from '@uiw/react-codemirror';
+import React, { useEffect, useRef, useState } from 'react';
+import CodeMirror, { ReactCodeMirrorProps, ReactCodeMirrorRef, useCodeMirror } from '@uiw/react-codemirror';
 
-import {python} from '@codemirror/lang-python';
-import {javascript} from '@codemirror/lang-javascript';
+import { python } from '@codemirror/lang-python';
+import { javascript } from '@codemirror/lang-javascript';
 import { angular } from '@codemirror/lang-angular';
 import { cpp } from '@codemirror/lang-cpp';
 import { css } from '@codemirror/lang-css';
@@ -20,6 +20,11 @@ import { vue } from '@codemirror/lang-vue';
 import { wast } from '@codemirror/lang-wast';
 import { xml } from '@codemirror/lang-xml';
 import { vscodeDark } from '@uiw/codemirror-theme-vscode';
+import { lineNumbers } from '@codemirror/view'
+import { useLocation } from '@remix-run/react';
+import { EditorState, Compartment } from '@codemirror/state';
+import { EditorView } from 'codemirror';
+
 
 export const languageMap: Record<string, any> = {
   'angular': angular,
@@ -42,21 +47,45 @@ export const languageMap: Record<string, any> = {
   'xml': xml
 };
 
-export default function Editor(props: ReactCodeMirrorProps) {
+interface EditorProps extends ReactCodeMirrorProps {
+  onSelectLine?: (arg: number) => void
+  initialLine?: number
+}
+
+export default function Editor(props: EditorProps) {
+
   var extensions = []
   if (props.lang && languageMap[props.lang]) {
     const langaugeMode = languageMap[props.lang]
     extensions.push(langaugeMode())
   }
 
+  const lineNumbersExtension = lineNumbers({
+    domEventHandlers: {
+      click(view, line, event) {
+        const lineNumber = view.state.doc.lineAt(line.from).number
+        if (props.onSelectLine) {
+          props?.onSelectLine(lineNumber)
+          const position = view.state.doc.line(lineNumber)
+          view.dispatch({ selection: { anchor: position.from }, scrollIntoView: true })
+        }
+        return true
+      }
+    }
+  })
+  extensions.push(lineNumbersExtension)
+
+
+
+
   return (
     <CodeMirror
-    className={`editor ${props.readOnly ? 'readonly' : ''}`}
-      height="calc(100vh - 3.5rem)"
+      height={"calc(100vh - 3.5rem)"}
       theme={vscodeDark}
       extensions={extensions}
-      autoFocus={true}
       {...props}
+      className={`editor ${props.readOnly ? 'readonly' : ''} ${props.onSelectLine ? 'lineClickable' : ''}`}
     />
-  );
+  )
+
 }
