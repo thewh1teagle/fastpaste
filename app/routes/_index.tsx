@@ -1,4 +1,4 @@
-import { redirect } from "@remix-run/node";
+import { LoaderArgs, redirect } from "@remix-run/node";
 import type { ActionArgs, V2_MetaFunction } from "@remix-run/node";
 import { useState } from "react";
 import { useFetcher } from "react-router-dom";
@@ -8,6 +8,10 @@ import { useKey } from "~/hooks/useKey";
 import { db } from "~/utils/db.server";
 import { FiFileText } from 'react-icons/fi'
 import { detectLanguage } from "~/utils/detectLang";
+import { userPrefs } from "~/cookies";
+import { v4 as uuidv4 } from 'uuid';
+
+
 
 export const meta: V2_MetaFunction = () => {
   return [{ title: "FastPaste" }];
@@ -15,16 +19,24 @@ export const meta: V2_MetaFunction = () => {
 
 export async function action({ request }: ActionArgs) {
   const data = await request.formData()
+
+  // get cookie
+  const cookieHeader = request.headers.get('Cookie')
+  let cookie = await userPrefs.parse(cookieHeader)
+  if (!cookie?.session) {
+    cookie = { session: uuidv4() }
+  }
+
   const content = data.get('content') as string
   var languageId = ''
   try {
     languageId = await detectLanguage(content)
   } catch { }
   const { id } = await db.code.create({
-    data: { content, language: languageId },
+    data: { content, language: languageId, session: cookie.session },
     select: { id: true }
   })
-  return redirect(`/p/${id}`)
+  return redirect(`/p/${id}`, { headers: { 'Set-Cookie': await userPrefs.serialize(cookie) } })
 }
 
 export default function Index() {

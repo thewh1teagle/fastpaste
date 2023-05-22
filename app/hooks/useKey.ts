@@ -19,6 +19,10 @@ export function useKey(key: string, cb: (event: any) => void, preventDefault = f
                 callback.current(event);
                 catched = true
             }
+            else if (key === 'ctrle' && event.key === 'e' && event.ctrlKey) {
+                callback.current(event);
+                catched = true
+            }
             
             if (catched && preventDefault) {
                 event.preventDefault()
