@@ -63,7 +63,7 @@ export default function PasteRoute() {
     const fetcher = useFetcher()
 
     const { hash } = useLocation()
-    
+
     const lineNumber = Number(hash.slice(2))
 
 
@@ -129,9 +129,20 @@ export default function PasteRoute() {
 
                 </div>
             </Nav>
-            <Editor initialLine={lineNumber ?? undefined} onSelectLine={n => {
-                window.location.hash = `L${n}`
-            }} autoFocus={edit} value={content} onChange={(value) => setContent(value)} readOnly={edit === false} lang={translatedLanguage ?? 'python'} />
+            <Editor
+                initialLine={lineNumber ?? undefined}
+                onSelectLine={n => {
+                    window.location.hash = `L${n}`
+                }}
+                options={{
+                    autoFocus: edit,
+                    value: content,
+                    onChange: (value) => setContent(value),
+                    readOnly: edit === false,
+                    lang: translatedLanguage ?? 'python'
+                }}
+                
+            />
         </div>
     )
 }

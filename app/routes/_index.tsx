@@ -1,6 +1,6 @@
 import { LoaderArgs, redirect } from "@remix-run/node";
 import type { ActionArgs, V2_MetaFunction } from "@remix-run/node";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useFetcher } from "react-router-dom";
 import Editor from "~/components/Editor";
 import Nav from "~/components/Nav";
@@ -43,6 +43,7 @@ export default function Index() {
   const [code, setCode] = useState('')
   const fetcher = useFetcher()
 
+
   async function onClick() {
     if (!code) {
       return
@@ -68,7 +69,11 @@ export default function Index() {
           <span>Create</span>
         </button>
       </Nav>
-      <Editor autoFocus={true} onChange={(value, viewUpdate) => setCode(value)} />
+      <Editor options={{
+          autoFocus: true,
+          onChange: (value, viewUpdate) => setCode(value)
+        }}
+      />
     </div>
   );
 }

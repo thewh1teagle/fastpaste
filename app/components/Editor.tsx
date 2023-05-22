@@ -47,16 +47,19 @@ export const languageMap: Record<string, any> = {
   'xml': xml
 };
 
-interface EditorProps extends ReactCodeMirrorProps {
+interface EditorProps {
   onSelectLine?: (arg: number) => void
-  initialLine?: number
+  initialLine?: number,
+  options: ReactCodeMirrorProps
 }
 
 export default function Editor(props: EditorProps) {
 
+  const ref = React.useRef<any>();
+  const scrolledRef = useRef(false)
   var extensions = []
-  if (props.lang && languageMap[props.lang]) {
-    const langaugeMode = languageMap[props.lang]
+  if (props.options.lang && languageMap[props.options.lang]) {
+    const langaugeMode = languageMap[props.options.lang]
     extensions.push(langaugeMode())
   }
 
@@ -76,15 +79,28 @@ export default function Editor(props: EditorProps) {
   extensions.push(lineNumbersExtension)
 
 
+  function refCallback(editor: ReactCodeMirrorRef) {
+    // workround for bug in the library where editor.state and editor.view are undefined
+    if (!ref.current?.editor && editor?.editor && editor?.state && editor?.view) {
+      if (props.initialLine) {
+        const position = editor?.view.state.doc.line(props.initialLine!)
+        editor?.view.dispatch({ selection: { anchor: position.from }, scrollIntoView: true })
+
+      }
+      ref.current = editor
+    }
+  }
 
 
   return (
     <CodeMirror
+      ref={refCallback}
       height={"calc(100vh - 3.5rem)"}
       theme={vscodeDark}
       extensions={extensions}
-      {...props}
-      className={`editor ${props.readOnly ? 'readonly' : ''} ${props.onSelectLine ? 'lineClickable' : ''}`}
+      placeholder='Paste your code here...'
+      {...props.options}
+      className={`editor ${props.options.readOnly ? 'readonly' : ''} ${props.onSelectLine ? 'lineClickable' : ''}`}
     />
   )
 
